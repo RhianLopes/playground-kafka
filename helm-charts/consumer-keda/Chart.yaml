@@ -1,0 +1,4 @@
+apiVersion: v2
+name: helm-charts-consumer-keda
+description: A Helm chart for Kubernetes Consumer KEDA
+version: 1.0.0

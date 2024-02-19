@@ -1,0 +1,48 @@
+{{- if .Values.scaling.enabled }}
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ .Release.Name }}
+  namespace: {{ .Values.environment }}-{{ .Release.Name }}
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name: {{ .Release.Name }}
+  pollingInterval: {{ .Values.scaling.pollingInterval }}
+  cooldownPeriod: {{ .Values.scaling.cooldownPeriod }}
+  minReplicaCount: {{ .Values.scaling.minReplicas }}
+  maxReplicaCount: {{ .Values.scaling.maxReplicas }}
+  triggers: 
+    {{- toYaml .Values.scaling.triggers | nindent 2 }}
+  {{- if .Values.scaling.auth.enabled }}
+    authenticationRef:
+      name: {{ .Release.Name }}-keda
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Release.Name }}-keda
+  namespace: {{ .Values.environment }}-{{ .Release.Name }}
+data:
+  sasl: {{ "plaintext" | b64enc }}
+  username: {{ .Values.scaling.auth.username | b64enc }}
+  password: {{ .Values.scaling.auth.password | b64enc }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: {{ .Release.Name }}-keda
+  namespace: {{ .Values.environment }}-{{ .Release.Name }}
+spec:
+  secretTargetRef:
+  - parameter: sasl
+    name: {{ .Release.Name }}-keda
+    key: sasl
+  - parameter: username
+    name: {{ .Release.Name }}-keda
+    key: username
+  - parameter: password
+    name: {{ .Release.Name }}-keda
+    key: password
+  {{- end }}
+{{- end }}

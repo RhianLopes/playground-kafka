@@ -1,0 +1,4 @@
+apiVersion: v2
+name: helm-charts-consumer
+description: A Helm chart for Kubernetes Consumer
+version: 1.0.0

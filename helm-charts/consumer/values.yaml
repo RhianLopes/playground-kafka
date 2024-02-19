@@ -1,0 +1,16 @@
+environment: dev
+
+image:
+  repository: rhianlopes/kafka-consumer
+  tag: latest
+  pullPolicy: Always
+
+network:
+  port: 3000
+
+env:
+  KAFKA_BROKERS: 'kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092'
+  KAFKA_CONSUMER_GROUP: 'example-consumer-group'
+  KAFKA_TOPIC: 'example-topic'
+  KAFKA_USER: 'user1'
+  KAFKA_SECRET: '<client_password>'

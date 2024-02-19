@@ -1,0 +1,36 @@
+environment: dev
+
+image:
+  repository: rhianlopes/kafka-consumer
+  tag: latest
+  pullPolicy: Always
+
+network:
+  port: 3000
+
+env:
+  KAFKA_BROKERS: 'kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092'
+  KAFKA_CONSUMER_GROUP: 'example-consumer-group'
+  KAFKA_TOPIC: 'example-topic'
+  KAFKA_USER: 'user1'
+  KAFKA_SECRET: '<client_password>'
+
+scaling:
+  enabled: true
+  pollingInterval: 10
+  cooldownPeriod: 30
+  minReplicas: 0
+  maxReplicas: 1
+  auth:
+    enabled: true
+    username: user1
+    password: '<client_password>'
+  triggers:
+  - type: kafka
+    metadata:
+      bootstrapServers: 'kafka-controller-0.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-1.kafka-controller-headless.kafka.svc.cluster.local:9092,kafka-controller-2.kafka-controller-headless.kafka.svc.cluster.local:9092'
+      consumerGroup: example-consumer-group
+      topic: example-topic
+      lagThreshold: "2"
+      offsetResetPolicy: earliest
+      version: 3.6.0
